@@ -1,2 +1,2 @@
 # slide_for_monthwork
-latex code for 
+latex code for team work silde
