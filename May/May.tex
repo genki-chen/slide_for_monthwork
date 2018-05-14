@@ -7,6 +7,9 @@
 %\usepackage{cite}  
 \usepackage{amsfonts, amsmath, mathrsfs, amsbsy, amssymb, dsfont,setspace}
 \usepackage[square, comma, sort&compress, numbers]{natbib} 
+\usepackage{algorithm}  
+\usepackage{algorithmic} 
+\usepackage{float} 
 %\usetheme{Warsaw}  
 \usetheme{CambridgeUS}
 \begin{document} 
@@ -29,17 +32,69 @@
   \frametitle{Low-Rank}
   低秩矩阵逼近(LRMA)的方法被应用在很多地方，\citep{Ren2016Image}采用了一种
   加权核范数最小化的方法，用于先验盲图像去模糊。\citep{Tang2016Radar}则提
-  出了一种迭代软阈值算法，用于估计前墙回波的低秩矩阵和来自减少的测量集中
-  的目标回波的稀疏矩阵。
+  出了一种迭代软阈值算法，用于使用减少的测量集来估计前墙回波的低秩矩阵和
+  目标回波的稀疏矩阵。
 \end{frame}
 \begin{frame}
   \frametitle{Soft thresholding algorithm}
   我们回波信号模型定为：
-  \begin{equation*} 
+  \begin{equation} 
 	\text{Z}=\text Z^{w}+\text{Z}^{t}+\Upsilon.
+  \end{equation}
+  所以我们的目标为估计$\text{Z}^w$和$\text{Z}^{t}$，这里采用鲁棒主成分分析
+  (RPCA)，所以优化问题描述为：
+  \begin{equation} 
+	\mathop{\text {minimize}}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{Z}^{t}\Vert_{1}\ \; \text{s.t}.\ \Vert \text{Z}-(\text{Z}^{w}+\text{Z}^{t})\Vert_{2} < \epsilon 
+  \end{equation}
+  当$\text{Z}$的全部数据被测量时，我们可以用凸优化的方法来解上式\citep{Chandrasekaran2009Rank}。 
+\end{frame}
+\begin{frame}
+  \frametitle{Soft thresholding algorithm}
+  在本例中，我们只测量了$K$个数据($K \ll N \times M$)，记线性变换$\mathcal{A}$
+  为$\mathbb{C}^{M\times\!N}\to\mathbb{C}^{K}$:
+  \begin{equation*}
+	\text{y}=\mathcal{A}(\text{Z})=\mathcal{A}(\text{Z}^{w}+\text{Z}^{t}+\Upsilon)
   \end{equation*}
-  所以我们的目标为估计$\text{Z}^w$和$\text{Z}^{t}$，
-
+  优化问题变为：
+  \begin{equation}
+	\mathop{\text{minimize}}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{z}^{t}\Vert_{1}\ \text{s.t}.\ \Vert \text{y}-\mathcal{A}(\text{Z}^{w}+\text{z}^{t})\Vert_{2} < \epsilon
+  \end{equation}
+  \citep{Waters2011SpaRCS}提出的SpaRSC贪婪算法，可用于解决该优化问题，但是需要
+  有矩阵$\text{Z}$的稀疏水平的先验知识。
+\end{frame}
+\begin{frame}
+  \frametitle{Soft thresholding algorithm}
+  我们引入稀疏字典$\text{W}$来取代假设信号域的稀疏性，并将式(3)转化为拉格朗日
+  正则化的形式：
+  \begin{equation}
+\mathop\text{minimize}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{y}-\mathcal{A}(\text{Z}^{w}+\text{Z}^{t})\Vert_{2}+\lambda_{w}(\Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{WZ}^{t}\Vert_{1})
+  \end{equation}
+  为解决上面的问题，我们引入迭代软阈值的算法，使$\text{Z}^w$的奇异值和矩阵
+  $\text{WZ}^t$的项收缩到0，阈值算子为：
+  \begin{equation*}
+	\mathcal{T}_{\tau}(x)=\frac{x}{\vert x\vert }(\vert x\vert -\tau)_{+}
+  \end{equation*}
+\end{frame}
+\begin{frame}
+  \frametitle{Soft thresholding algorithm}
+  \scriptsize
+  \begin{algorithm}[H]  
+	\caption{软阈值迭代}
+	\label{alg:1}
+	\begin{algorithmic}[1]
+	  \STATE{初始化：$\tilde{\text{Z}}_0=\mathcal{A}^Ty,\;\tilde{\text{Z}}_0^w=\tilde{\text{Z}_0},\; 
+	  \tilde{\text{Z}}_0^t=0,\;i=1$}
+	  \STATE{Step 1:$\tilde{\text{Z}}_{i}^{w}=\mathcal{S}_{\lambda_{w}}(\tilde{\text{Z}}_{i-1}-\tilde{\text{Z}}_{i-1}^{t})$}
+	  \STATE{Step 2:$\tilde{\text{Z}}_{i}^{t}=\text{W}^{\dagger}(\mathcal{T}_{\lambda_{t}}\text{W}(\tilde{\text{Z}}_{i-1}-\tilde{\text{Z}}_{i-1}^{w}))$}
+	  \IF{$\frac{\Vert\tilde{\text{Z}}_{i}^{w}+\tilde{\text{Z}}_{i}^{t}-(\tilde{\text{Z}}_{i-1}^{w}+\tilde{\text{Z}}_{i-1}^{t})\Vert_{2}}{\Vert\tilde{\text{Z}}_{i-1}^{w}+\tilde{\text{Z}}_{i-1}^{t}\Vert_{2}} < \delta $}
+	  \STATE{结束}
+	  \ELSE
+	  \STATE{$\tilde{Z}_{i}=\tilde{\text{Z}}_{i}^{w}+\tilde{\text{Z}}_{i}^{t}-\mathcal{A}^{T}(\mathcal{A}(\tilde{\text{Z}}_{i}^{w}+\tilde{\text{Z}}_{i}^{t})-\text{y})$}
+	  \STATE{$i\leftarrow i+1 $}
+	  \STATE{回到Step 1}
+	  \ENDIF
+	\end{algorithmic}
+  \end{algorithm}
 \end{frame}
 \begin{frame}[allowframebreaks]{References}
   \footnotesize
@@ -61,7 +116,7 @@
   \frametitle{Compressive Sensing Based Scene Reconstruction}
 \end{frame}
 \*begin{figure}[H]
-  \centering
-  \includegraphics[width=0.5\textwidth]{fig2}
-  \caption{CSI处理流程图}
+\centering
+\includegraphics[width=0.5\textwidth]{fig2}
+\caption{CSI处理流程图}
 \end{figure}
