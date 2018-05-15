@@ -33,7 +33,8 @@
   低秩矩阵逼近(LRMA)的方法被应用在很多地方，\citep{Ren2016Image}采用了一种
   加权核范数最小化的方法，用于先验盲图像去模糊。\citep{Tang2016Radar}则提
   出了一种迭代软阈值算法，用于使用减少的测量集来估计前墙回波的低秩矩阵和
-  目标回波的稀疏矩阵。
+  目标回波的稀疏矩阵。\citep{Bouzerdoum2017A}则是应用在了多极化信道的穿墙
+  雷达成像上。
 \end{frame}
 \begin{frame}
   \frametitle{Soft thresholding algorithm}
@@ -57,7 +58,7 @@
   \end{equation*}
   优化问题变为：
   \begin{equation}
-	\mathop{\text{minimize}}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{z}^{t}\Vert_{1}\ \text{s.t}.\ \Vert \text{y}-\mathcal{A}(\text{Z}^{w}+\text{z}^{t})\Vert_{2} < \epsilon
+	\mathop{\text{minimize}}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{Z}^{t}\Vert_{1}\ \text{s.t}.\ \Vert \text{y}-\mathcal{A}(\text{Z}^{w}+\text{Z}^{t})\Vert_{2} < \epsilon
   \end{equation}
   \citep{Waters2011SpaRCS}提出的SpaRSC贪婪算法，可用于解决该优化问题，但是需要
   有矩阵$\text{Z}$的稀疏水平的先验知识。
@@ -95,6 +96,16 @@
 	  \ENDIF
 	\end{algorithmic}
   \end{algorithm}
+\end{frame}
+\begin{frame}{Multipolarization Through-wall Radar}
+  回波信号模型和前面相似：
+  \begin{equation}
+	\text{Z}_l=\text Z^{w}_l+\text{Z}_l^{t}+\Upsilon_l
+  \end{equation}
+  其中$\text{Z}_l$表示第$l$个极化信道的回波。优化问题转化为：
+  \begin{equation}
+	\mathop{\text{minimize}}\limits_{\text{Z}^{w},\text{S}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{S}^T\Vert_{2,1}\ \text{s.t}.\ \Big\Vert \text{Y}-\big[\mathcal{A}\text{Z}^{w}+\Phi\Psi\text{S}\big]\Big\Vert_{F}^2 < \epsilon
+  \end{equation}
 \end{frame}
 \begin{frame}[allowframebreaks]{References}
   \footnotesize
