@@ -10,6 +10,7 @@
 \usepackage{algorithm}  
 \usepackage{algorithmic} 
 \usepackage{float} 
+\usepackage{latexsym} 
 %\usetheme{Warsaw}  
 \usetheme{CambridgeUS}
 \begin{document} 
@@ -40,38 +41,38 @@
   \frametitle{Soft thresholding algorithm}
   我们回波信号模型定为：
   \begin{equation} 
-	\text{Z}=\text Z^{w}+\text{Z}^{t}+\Upsilon.
+	\mathbf{Z}=\mathbf Z^{w}+\mathbf{Z}^{t}+\Upsilon.
   \end{equation}
-  所以我们的目标为估计$\text{Z}^w$和$\text{Z}^{t}$，这里采用鲁棒主成分分析
+  所以我们的目标为估计$\mathbf{Z}^w$和$\mathbf{Z}^{t}$，这里采用鲁棒主成分分析
   (RPCA)，所以优化问题描述为：
   \begin{equation} 
-	\mathop{\text {minimize}}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{Z}^{t}\Vert_{1}\ \; \text{s.t}.\ \Vert \text{Z}-(\text{Z}^{w}+\text{Z}^{t})\Vert_{2} < \epsilon 
+	\mathop{\text{minimize}}\limits_{\mathbf{Z}^{w},\mathbf{Z}^{t}} \Vert \mathbf{Z}^{w}\Vert_{*}+\lambda\Vert \mathbf{Z}^{t}\Vert_{1}\ \; \mathbf{s.t}.\ \Vert \mathbf{Z}-(\mathbf{Z}^{w}+\mathbf{Z}^{t})\Vert_{2} < \epsilon 
   \end{equation}
-  当$\text{Z}$的全部数据被测量时，我们可以用凸优化的方法来解上式\citep{Chandrasekaran2009Rank}。 
+  当$\mathbf{Z}$的全部数据被测量时，我们可以用凸优化的方法来解上式\citep{Chandrasekaran2009Rank}。 
 \end{frame}
 \begin{frame}
   \frametitle{Soft thresholding algorithm}
   在本例中，我们只测量了$K$个数据($K \ll N \times M$)，记线性变换$\mathcal{A}$
   为$\mathbb{C}^{M\times\!N}\to\mathbb{C}^{K}$:
   \begin{equation*}
-	\text{y}=\mathcal{A}(\text{Z})=\mathcal{A}(\text{Z}^{w}+\text{Z}^{t}+\Upsilon)
+	\mathbf{y}=\mathcal{A}(\mathbf{Z})=\mathcal{A}(\mathbf{Z}^{w}+\mathbf{Z}^{t}+\Upsilon)
   \end{equation*}
   优化问题变为：
   \begin{equation}
-	\mathop{\text{minimize}}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{Z}^{t}\Vert_{1}\ \text{s.t}.\ \Vert \text{y}-\mathcal{A}(\text{Z}^{w}+\text{Z}^{t})\Vert_{2} < \epsilon
+	\mathop{\text{minimize}}\limits_{\mathbf{Z}^{w},\mathbf{Z}^{t}} \Vert \mathbf{Z}^{w}\Vert_{*}+\lambda\Vert \mathbf{Z}^{t}\Vert_{1}\ \mathbf{s.t}.\ \Vert \mathbf{y}-\mathcal{A}(\mathbf{Z}^{w}+\mathbf{Z}^{t})\Vert_{2} < \epsilon
   \end{equation}
   \citep{Waters2011SpaRCS}提出的SpaRSC贪婪算法，可用于解决该优化问题，但是需要
-  有矩阵$\text{Z}$的稀疏水平的先验知识。
+  有矩阵$\mathbf{Z}$的稀疏水平的先验知识。
 \end{frame}
 \begin{frame}
   \frametitle{Soft thresholding algorithm}
-  我们引入稀疏字典$\text{W}$来取代假设信号域的稀疏性，并将式(3)转化为拉格朗日
+  我们引入稀疏字典$\mathbf{W}$来取代假设信号域的稀疏性，并将式(3)转化为拉格朗日
   正则化的形式：
   \begin{equation}
-\mathop\text{minimize}\limits_{\text{Z}^{w},\text{Z}^{t}} \Vert \text{y}-\mathcal{A}(\text{Z}^{w}+\text{Z}^{t})\Vert_{2}+\lambda_{w}(\Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{WZ}^{t}\Vert_{1})
+\mathop\text{minimize}\limits_{\mathbf{Z}^{w},\mathbf{Z}^{t}} \Vert \mathbf{y}-\mathcal{A}(\mathbf{Z}^{w}+\mathbf{Z}^{t})\Vert_{2}+\lambda_{w}(\Vert \mathbf{Z}^{w}\Vert_{*}+\lambda\Vert \mathbf{WZ}^{t}\Vert_{1})
   \end{equation}
-  为解决上面的问题，我们引入迭代软阈值的算法，使$\text{Z}^w$的奇异值和矩阵
-  $\text{WZ}^t$的项收缩到0，阈值算子为：
+  为解决上面的问题，我们引入迭代软阈值的算法，使$\mathbf{Z}^w$的奇异值和矩阵
+  $\mathbf{WZ}^t$的项收缩到0，阈值算子为：
   \begin{equation*}
 	\mathcal{T}_{\tau}(x)=\frac{x}{\vert x\vert }(\vert x\vert -\tau)_{+}
   \end{equation*}
@@ -83,14 +84,14 @@
 	\caption{软阈值迭代}
 	\label{alg:1}
 	\begin{algorithmic}[1]
-	  \STATE{初始化：$\tilde{\text{Z}}_0=\mathcal{A}^Ty,\;\tilde{\text{Z}}_0^w=\tilde{\text{Z}_0},\; 
-	  \tilde{\text{Z}}_0^t=0,\;i=1$}
-	  \STATE{Step 1:$\tilde{\text{Z}}_{i}^{w}=\mathcal{S}_{\lambda_{w}}(\tilde{\text{Z}}_{i-1}-\tilde{\text{Z}}_{i-1}^{t})$}
-	  \STATE{Step 2:$\tilde{\text{Z}}_{i}^{t}=\text{W}^{\dagger}(\mathcal{T}_{\lambda_{t}}\text{W}(\tilde{\text{Z}}_{i-1}-\tilde{\text{Z}}_{i-1}^{w}))$}
-	  \IF{$\frac{\Vert\tilde{\text{Z}}_{i}^{w}+\tilde{\text{Z}}_{i}^{t}-(\tilde{\text{Z}}_{i-1}^{w}+\tilde{\text{Z}}_{i-1}^{t})\Vert_{2}}{\Vert\tilde{\text{Z}}_{i-1}^{w}+\tilde{\text{Z}}_{i-1}^{t}\Vert_{2}} < \delta $}
+	  \STATE{初始化：$\tilde{\mathbf{Z}}_0=\mathcal{A}^Ty,\;\tilde{\mathbf{Z}}_0^w=\tilde{\mathbf{Z}_0},\; 
+	  \tilde{\mathbf{Z}}_0^t=0,\;i=1$}
+	  \STATE{Step 1:$\tilde{\mathbf{Z}}_{i}^{w}=\mathcal{S}_{\lambda_{w}}(\tilde{\mathbf{Z}}_{i-1}-\tilde{\mathbf{Z}}_{i-1}^{t})$}
+	  \STATE{Step 2:$\tilde{\mathbf{Z}}_{i}^{t}=\mathbf{W}^{\dagger}(\mathcal{T}_{\lambda_{t}}\mathbf{W}(\tilde{\mathbf{Z}}_{i-1}-\tilde{\mathbf{Z}}_{i-1}^{w}))$}
+	  \IF{$\frac{\Vert\tilde{\mathbf{Z}}_{i}^{w}+\tilde{\mathbf{Z}}_{i}^{t}-(\tilde{\mathbf{Z}}_{i-1}^{w}+\tilde{\mathbf{Z}}_{i-1}^{t})\Vert_{2}}{\Vert\tilde{\mathbf{Z}}_{i-1}^{w}+\tilde{\mathbf{Z}}_{i-1}^{t}\Vert_{2}} < \delta $}
 	  \STATE{结束}
 	  \ELSE
-	  \STATE{$\tilde{Z}_{i}=\tilde{\text{Z}}_{i}^{w}+\tilde{\text{Z}}_{i}^{t}-\mathcal{A}^{T}(\mathcal{A}(\tilde{\text{Z}}_{i}^{w}+\tilde{\text{Z}}_{i}^{t})-\text{y})$}
+	  \STATE{$\tilde{\mathbf Z}_{i}=\tilde{\mathbf{Z}}_{i}^{w}+\tilde{\mathbf{Z}}_{i}^{t}-\mathcal{A}^{T}(\mathcal{A}(\tilde{\mathbf{Z}}_{i}^{w}+\tilde{\mathbf{Z}}_{i}^{t})-\mathbf{y})$}
 	  \STATE{$i\leftarrow i+1 $}
 	  \STATE{回到Step 1}
 	  \ENDIF
@@ -100,39 +101,65 @@
 \begin{frame}{Multipolarization Through-wall Radar}
   回波信号模型和前面相似：
   \begin{equation}
-	\text{Z}_l=\text Z^{w}_l+\text{Z}_l^{t}+\Upsilon_l
+	\mathbf{Z}_l=\mathbf Z^{w}_l+\mathbf{Z}_l^{t}+\Upsilon_l
   \end{equation}
-  其中$\text{Z}_l$表示第$l$个极化信道的回波。优化问题转化为：
+  其中$\mathbf{Z}_l$表示第$l$个极化信道的回波。优化问题转化为：
   \begin{equation}
-	\mathop{\text{minimize}}\limits_{\text{Z}^{w},\text{S}} \Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{S}^T\Vert_{2,1}\ \text{s.t}.\ \Big\Vert \text{Y}-\big[\mathcal{A}(\text{Z}^{w})+\Phi\Psi\text{S}\big]\Big\Vert_{F}^2 < \epsilon
+	\mathop{\text{minimize}}\limits_{\mathbf{Z}^{w},\mathbf{S}} \Vert \mathbf{Z}^{w}\Vert_{*}+\lambda\Vert \mathbf{S}^T\Vert_{2,1}\ \mathbf{s.t}.\ \Big\Vert \mathbf{Y}-\big[\mathcal{A}(\mathbf{Z}^{w})+\Phi\Psi\mathbf{S}\big]\Big\Vert_{F}^2 < \epsilon
   \end{equation}
-  其中$\mathcal A(\text{Z}^w) = [\Phi\text{vec}(\text{Z}_1^w),\dots,\Phi\text{vec}(\text{Z}_L^w)] $，$\Phi$为稀疏字典，$\Psi\text S = \text Z^t$。
+  其中$\mathcal A(\mathbf{Z}^w) = [\Phi\mathbf{vec}(\mathbf{Z}_1^w),\dots,\Phi\mathbf{vec}(\mathbf{Z}_L^w)] $，$\Phi$为稀疏字典，$\Psi\mathbf S = \mathbf Z^t$。
 \end{frame}
 \begin{frame}{Multipolarization Through-wall Radar}
   转化(6)为拉格朗日形式：
   \begin{equation}
-	\frac{1}{2}\Big\Vert \text{Y}-\big[\mathcal{A}(\text{Z}^{w})+\Phi\Psi\text{S}\big]\Big\Vert_{F}^2 +\gamma\big(\Vert \text{Z}^{w}\Vert_{*}+\lambda\Vert \text{S}^T\Vert_{2,1}\big) 
+	\frac{1}{2}\Big\Vert \mathbf{Y}-\big[\mathcal{A}(\mathbf{Z}^{w})+\Phi\Psi\mathbf{S}\big]\Big\Vert_{F}^2 +\gamma\big(\Vert \mathbf{Z}^{w}\Vert_{*}+\lambda\Vert \mathbf{S}^T\Vert_{2,1}\big) 
   \end{equation}
+  对于形如$\mathop{\text{minimize}}\limits_{\mathbf x}f(\mathbf x)=g(\mathbf x)+\lambda h(\mathbf x)$的优化问题，其中$g(\mathbf x)$为凸函数且光滑可微，$h(\mathbf x)$凸但不严格光滑，可采用迭代估计每一次的$\mathbf x_i$的值来求解：
+  \begin{equation*}
+	\mathbf x_{i+1} = \mathop{\text{minimize}}\limits_{\mathbf x}\frac{1}{2}\Vert \mathbf u_i -\mathbf x \Vert _2^2+\lambda \alpha h(\mathbf x) 
+  \end{equation*}
+  其中$\mathbf u_i = \mathbf x_i -\alpha\nabla g(\mathbf x_i)$，当$\alpha\in\big(0,\frac{1}{C}\big]$将收敛。
+\end{frame}
+\begin{frame}{Multipolarization Through-wall Radar}
   优化问题可分解为：
-  \begin{equation}
-	\begin{split}
-  \text{Z}_{i+1}^w&=\mathop{\text{minimize}}\limits_{\text{Z}^{w}}\frac{1}{2}\Big\Vert \text{Z}_i-\text{Z}^{w}-\mathcal{A}^*(\Phi\Psi\text{S}_i)\Big\Vert_{F}^2 +\alpha\gamma\Vert\text{Z}^{w}\Vert_{*}\\ 
-	\text{S}_{i+1}^w&=\mathop{\text{minimize}}\limits_{\text{s}}\frac{1}{2}\Big\Vert \text{Z}_{i}-\text{Z}^{w}_{i+1}-\mathcal{A}^*(\Phi\Psi\text{S})\Big\Vert_{F}^2 +\alpha\gamma\lambda\Vert\text{Z}^{w}\Vert_{*} 
-  \end{split}
-  \end{equation}
-
+  \begin{eqnarray}
+  \mathbf{Z}_{i+1}^w&=&\mathop{\text{minimize}}\limits_{\mathbf{Z}^{w}}\frac{1}{2}\Big\Vert \mathbf{Z}_i-\mathbf{Z}^{w}-\mathcal{A}^*(\Phi\Psi\mathbf{S}_i)\Big\Vert_{F}^2 +\alpha\gamma\Vert\mathbf{Z}^{w}\Vert_{*}\\ 
+	\mathbf{S}_{i+1}^w&=&\mathop{\text{minimize}}\limits_{\mathbf{s}}\frac{1}{2}\Big\Vert \mathbf{Z}_{i}-\mathbf{Z}^{w}_{i+1}-\mathcal{A}^*(\Phi\Psi\mathbf{S})\Big\Vert_{F}^2 +\alpha\gamma\lambda\Vert\mathbf{Z}^{w}\Vert_{*} 
+  \end{eqnarray}
+收敛条件为$\alpha\in\big(0,1/\Vert \Phi \Vert_2^2\big]$，其中(9)式可以进一步写为：
+\begin{equation}
+  \mathbf{S}_{i+1} = \mathop{\text{minimize}}\limits_{\mathbf{s}} \frac{1}{2}\Vert \mathbf{X}-\mathbf{S}\Vert_F^2+\beta\alpha\gamma\lambda\Vert\mathbf{S}^T\Vert_{2,1}
+\end{equation}
+其中:
+\begin{equation*}
+  \mathbf{X}=\mathbf S_i -\beta \Psi^H( \Phi \Psi\mathbf S_i-\mathcal A(\mathbf Z_i-\mathbf Z_{i+1}^w))
+\end{equation*}
 \end{frame}
 \begin{frame}{Multipolarization Through-wall Radar}
-\end{frame}
-\begin{frame}{Multipolarization Through-wall Radar}
-\end{frame}
-\begin{frame}{Multipolarization Through-wall Radar}
-\end{frame}
-\begin{frame}{Multipolarization Through-wall Radar}
+  和算法\ref{alg:1}类似，多极化信道下的迭代算法为：
+  \begin{algorithm}[H]  
+ % \algsetup{linenosize=\footnotesize} 
+  \footnotesize
+	\caption{多极化信道下的软阈值迭代}
+	\label{alg:2}
+	\begin{algorithmic}[1]
+	  \STATE{初始化：$\mathbf{Z}_0^w\gets\mathcal{A}^*(\mathbf Y),\;\mathbf{S}_0 \gets 0,\;i\gets 0$}
+	  \STATE{Step 1:$\mathbf{Z}_i\gets \mathbf{Z}_i^w+\mathcal{A}^*(\Phi\Psi\mathbf{S}_i)-\alpha\mathcal{A}^*(\mathcal{A}(\mathbf{Z}_i^w)+\Phi\Psi\mathbf{S}_i-\mathbf{Y})$}
+	  \STATE{Step 2:$\mathbf{Z}_{i+1}^w\gets\mathcal{S}_{\alpha\gamma}(\mathbf{Z}_i-\mathcal{A}^*(\Phi\Psi\mathbf{S}_i))$}
+	  \STATE{Step 3:$\mathbf{X}\gets\mathbf S_i -\beta \Psi^H( \Phi \Psi\mathbf S_i-\mathcal A(\mathbf Z_i-\mathbf Z_{i+1}^w))$}
+	  \STATE{Step 4:$\mathbf{S}_{i+1}\gets\mathcal{R}_{\beta\alpha\gamma\lambda}(\mathbf{X})$}
+	  \IF{$\frac{\vert f(\mathbf{Z}_{i+1}^w,\mathbf{S}_{i+1})-f(\mathbf{Z}_{i}^w,\mathbf{S}_i)\vert }{\vert f(\mathbf{Z}_i^w,\mathbf{S}_i)\vert} < \delta $}
+	  \STATE{结束}
+	  \ELSE
+	  \STATE{$i\leftarrow i+1 $}
+	  \STATE{回到Step 1}
+	  \ENDIF
+	\end{algorithmic}
+  \end{algorithm}
 \end{frame}
 \begin{frame}[allowframebreaks]{References}
-  \footnotesize
-  %\scriptsize
+ % \footnotesize
+  \scriptsize
   \bibliographystyle{ieeetr} 
   \bibliography{ct.bib} 
 \end{frame}
@@ -151,6 +178,6 @@
 \end{frame}
 \*begin{figure}[H]
 \centering
-\includegraphics[width=0.5\textwidth]{fig2}
+\includegraphics[width=0.5\mathbfwidth]{fig2}
 \caption{CSI处理流程图}
 \end{figure}
